@@ -27,19 +27,25 @@ static void clock_init(void) {
 	rcc_wait_for_osc_ready(RCC_HSI16);
 	rcc_set_sysclk_source(RCC_CFGR_SW_HSI16);
 	rcc_wait_for_sysclk_status(RCC_HSI16);
-	// Set MSI to 4MHz
+	// Disable MSI
 	rcc_osc_off(RCC_MSI);
+/*
 	rcc_set_msi_range(RCC_CR_MSIRANGE_4MHZ);
 	rcc_osc_on(RCC_MSI);
 	rcc_wait_for_osc_ready(RCC_MSI);
+*/
 	// Setup pll (fIN=16Mhz, fVCO=160Mhz, fR=80MHz)
-	rcc_set_main_pll(RCC_PLLCFGR_PLLSRC_HSI16, 7, 80, 0, 0, 0);
+	rcc_set_main_pll(RCC_PLLCFGR_PLLSRC_HSI16, 3, 40, 0, 0, 0);
 	rcc_pll_output_enable(RCC_PLLCFGR_PLLREN);
 	rcc_osc_on(RCC_PLL);
 	rcc_wait_for_osc_ready(RCC_PLL);
 	// Switch to PLL
 	rcc_set_sysclk_source(RCC_CFGR_SW_PLL);
 	rcc_wait_for_sysclk_status(RCC_PLL);
+/*
+	// Disable HSI
+	rcc_osc_off(RCC_HSI16);
+*/
 	// AHB prescaler=1 (80MHz)
 	rcc_set_hpre(RCC_CFGR_HPRE_NODIV);
 	// APB1 prescaler=16 (5MHz)
@@ -49,14 +55,7 @@ static void clock_init(void) {
 	rcc_ahb_frequency = MHZ(80);
 	rcc_apb1_frequency = MHZ(5);
 	rcc_apb2_frequency = MHZ(80);
-/*
-	// Set MSI to 48MHz
-	// Switch to MSI
-	rcc_set_sysclk_source(RCC_CFGR_SW_MSI);
-	rcc_wait_for_sysclk_status(RCC_MSI);
-*/
 	
-//	rcc_clock_setup_in_hsi_out_48mhz();
 	rcc_periph_clock_enable(RCC_GPIOA);
 	rcc_periph_clock_enable(RCC_GPIOB);
 }
