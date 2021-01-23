@@ -15,5 +15,5 @@ typedef struct menu_t menu_t;
 
 extern const menu_t menu_back;
 extern const menu_t menu_app;
-extern const menu_t menu_settings;
 extern const menu_t menu_brightness;
+extern const menu_t menu_poweroff;

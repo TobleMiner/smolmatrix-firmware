@@ -1,9 +1,10 @@
-#include "os.h"
-
 #include <stddef.h>
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/timer.h>
+
+#include "os.h"
+#include "sleep.h"
 
 #define OS_TIMER TIM15
 #define OS_TIMER_RCC RCC_TIM15
@@ -219,4 +220,8 @@ void os_delay(uint32_t us) {
 			__asm__ volatile("" : "+g" (ticks_then) : :);
 		}
 	}
+}
+
+void os_shutdown(void) {
+	sleep_enter_shutdown();	
 }

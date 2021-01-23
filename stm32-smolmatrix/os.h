@@ -29,3 +29,4 @@ void os_schedule_task_relative(os_task_t *task, os_task_f cb, uint32_t us, void 
 void os_abort_task(os_task_t *task);
 void os_run(void);
 void os_delay(uint32_t us);
+void os_shutdown(void);

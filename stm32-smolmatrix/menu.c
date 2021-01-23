@@ -5,12 +5,14 @@
 #include "icons.h"
 #include "menu.h"
 #include "menu_internal.h"
+#include "os.h"
 
 static void go_back(const struct menu_t *menu);
 static void change_brightness(const struct menu_t *menu);
 static void change_animation(const struct menu_t *menu);
 static void enter_app(const struct menu_t *menu);
 static void leave_app(const struct menu_t *menu);
+static void shutdown(const struct menu_t *menu);
 
 const menu_t menu_back = {
 	.icon = &icon_back,
@@ -22,24 +24,24 @@ const menu_t menu_back = {
 const menu_t menu_app = {
 	.icon = NULL,
 	.entries = NULL,
-	.next = &menu_settings,
+	.next = &menu_brightness,
 	.cb = change_animation,
 	.enter = enter_app,
 	.leave = leave_app,
 };
 
-const menu_t menu_settings = {
-	.icon = &icon_brightness,
-	.entries = NULL,
-	.next = &menu_app,
-	.cb = change_brightness,
-};
-
 const menu_t menu_brightness = {
 	.icon = &icon_brightness,
 	.entries = NULL,
-	.next = &menu_back,
+	.next = &menu_poweroff,
 	.cb = change_brightness,
+};
+
+const menu_t menu_poweroff = {
+	.icon = &icon_poweroff,
+	.entries = NULL,
+	.next = &menu_app,
+	.cb = shutdown,
 };
 
 static const menu_t *menu_root = &menu_app;
@@ -109,4 +111,10 @@ void menu_update() {
 			current_menu->cb(current_menu);
 		}
 	}
+}
+
+static void shutdown(const struct menu_t *menu) {
+	(void)menu;
+
+	os_shutdown();
 }
