@@ -7,6 +7,7 @@
 #include "animation_gameoflife_glider.h"
 #include "animation_gameoflife_hwss.h"
 #include "animation_gameoflife_tumbler.h"
+#include "animation_gameoflife_p16.h"
 
 fb_t animation_fb;
 
@@ -19,6 +20,7 @@ static animation_t *animations[] = {
 	&animation_gameoflife_glider,
 	&animation_gameoflife_hwss,
 	&animation_gameoflife_tumbler,
+	&animation_gameoflife_p16,
 };
 
 void animation_init() {
