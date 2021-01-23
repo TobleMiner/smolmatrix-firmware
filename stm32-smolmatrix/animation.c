@@ -4,6 +4,7 @@
 #include "animation_sinefield.h"
 #include "animation_flashlight.h"
 #include "animation_pixelracer.h"
+#include "animation_gameoflife.h"
 
 fb_t animation_fb;
 
@@ -13,6 +14,7 @@ static animation_t *animations[] = {
 	&animation_sinefield,
 	&animation_flashlight,
 	&animation_pixelracer,
+	&animation_gameoflife,
 };
 
 void animation_init() {
