@@ -7,25 +7,28 @@
 #include "os.h"
 #include "util.h"
 
-static uint8_t playfield1[FB_WIDTH * FB_HEIGHT] = {
-	0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+static gameoflife_playfield_t playfield1;
+/*
+ = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
+*/
 
-static uint8_t playfield2[FB_WIDTH * FB_HEIGHT];
+static gameoflife_playfield_t playfield2;
 
 static uint8_t* playfield_src;
 static uint8_t* playfield_dst;
@@ -98,7 +101,9 @@ static void animation_gameoflife_update(void* ctx) {
 	SWAP(playfield_src, playfield_dst);
 }
 
-static void animation_gameoflife_start(void) {
+void animation_gameoflife_start(const gameoflife_playfield_t *playfield) {
+	memcpy(playfield1, playfield, sizeof(playfield1));
+
 	playfield_src = playfield1;
 	playfield_dst = playfield2;
 
@@ -106,11 +111,6 @@ static void animation_gameoflife_start(void) {
 }
 
 
-static void animation_gameoflife_stop(void) {
+void animation_gameoflife_stop(void) {
 	os_abort_task(&update_task);
 }
-
-animation_t animation_gameoflife = {
-	animation_gameoflife_start,
-	animation_gameoflife_stop
-};
