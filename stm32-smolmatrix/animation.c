@@ -1,4 +1,5 @@
 #include "animation.h"
+#include "settings.h"
 #include "util.h"
 
 #include "animation_sinefield.h"
@@ -11,8 +12,6 @@
 
 fb_t animation_fb;
 
-static unsigned animation_id = 0;
-
 static animation_t *animations[] = {
 	&animation_sinefield,
 	&animation_flashlight,
@@ -23,8 +22,23 @@ static animation_t *animations[] = {
 	&animation_gameoflife_p16,
 };
 
+static unsigned animation_id = 0;
+
+static unsigned get_animation_id_safe(void) {
+	unsigned id = settings_get_animation_id();
+
+	if (id >= ARRAY_SIZE(animations)) {
+		id = 0;
+	}
+
+	return id;
+}
+
 void animation_init() {
-	animation_t *animation = animations[animation_id];
+	animation_t *animation;
+
+	animation_id = get_animation_id_safe();
+	animation = animations[animation_id];
 
 	animation->start();
 }
@@ -47,5 +61,9 @@ void animation_next() {
 
 	animation = animations[animation_id];
 
+	settings_set_animation_id(animation_id);
+
 	animation->start();
+
+	settings_store_to_flash();
 }

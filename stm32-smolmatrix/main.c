@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 #include <libopencm3/stm32/flash.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/pwr.h>
@@ -15,6 +14,7 @@
 #include "gpiod.h"
 #include "menu.h"
 #include "os.h"
+#include "settings.h"
 #include "util.h"
 
 static void clock_init(void) {
@@ -65,7 +65,9 @@ static uint64_t last_adc_update_g = 0;
 int main(void) {
 	gpiod_init();
 	clock_init();
+	settings_load_from_flash();
 	os_init();
+	display_init();
 	menu_init();
 
 	while(1) {

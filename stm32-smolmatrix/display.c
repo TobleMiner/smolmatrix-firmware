@@ -1,4 +1,5 @@
 #include "display.h"
+#include "settings.h"
 
 static const void *fbmem = NULL;
 
@@ -41,4 +42,8 @@ void display_update() {
 
 void display_mark_dirty(void) {
 	fb_dirty = true;
+}
+
+void display_init(void) {
+	display_brightness = settings_get_brightness();
 }

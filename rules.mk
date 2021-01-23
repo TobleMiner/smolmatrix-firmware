@@ -114,7 +114,7 @@ flash: $(PROJECT).flash
 ifeq (,$(DEVICE))
 $(LDSCRIPT):
 ifeq (,$(wildcard $(LDSCRIPT)))
-    $(error Unable to find specified linker script: $(LDSCRIPT))
+#    $(error Unable to find specified linker script: $(LDSCRIPT))
 endif
 else
 # if linker script generator was used, make sure it's cleaned.

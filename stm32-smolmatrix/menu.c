@@ -5,6 +5,7 @@
 #include "icons.h"
 #include "menu.h"
 #include "menu_internal.h"
+#include "settings.h"
 #include "os.h"
 
 static void go_back(const struct menu_t *menu);
@@ -71,9 +72,9 @@ static void go_back(const struct menu_t *menu) {
 	}
 }
 
-static int brightness = 100;
-
 static void change_brightness(const struct menu_t *menu) {
+	int brightness = display_get_brightness();
+
 	brightness -= 10;
 	if (brightness <= 0) {
 		brightness += 100;
@@ -81,6 +82,8 @@ static void change_brightness(const struct menu_t *menu) {
 
 	display_set_brightness(brightness);
 	display_mark_dirty();
+	settings_set_brightness(brightness);
+	settings_store_to_flash();
 }
 
 static void change_animation(const struct menu_t *menu) {
