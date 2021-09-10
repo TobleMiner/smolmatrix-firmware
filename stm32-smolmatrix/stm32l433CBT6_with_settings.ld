@@ -45,7 +45,7 @@ SECTIONS
   __exidx_end = .;
  } >rom
  . = ALIGN(8);
- .settings : {
+ .settings (NOLOAD) : {
   *(.settings)
   KEEP (*(.settings))
  } >settings
