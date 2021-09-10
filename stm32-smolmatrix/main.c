@@ -91,7 +91,7 @@ int main(void) {
 
 				for (x = 0; x < 15; x++) {
 					/* Set output bit if current brightness bit is set, too */
-					if ((*fb)[y * 15 + x] & (1 << bit)) {
+					if ((*fb)[(14 - y) * 15 + x] & (1 << bit)) {
 						row |= (1 << x);
 					}	
 				}
