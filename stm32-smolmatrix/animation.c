@@ -9,6 +9,8 @@
 #include "animation_gameoflife_hwss.h"
 #include "animation_gameoflife_tumbler.h"
 #include "animation_gameoflife_p16.h"
+#include "animation_hoa.h"
+#include "animation_tm.h"
 
 fb_t animation_fb;
 
@@ -20,6 +22,8 @@ static animation_t *animations[] = {
 	&animation_gameoflife_hwss,
 	&animation_gameoflife_tumbler,
 	&animation_gameoflife_p16,
+	&animation_hoa,
+	&animation_tm,
 };
 
 static unsigned animation_id = 0;
