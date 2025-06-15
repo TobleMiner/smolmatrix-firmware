@@ -1,6 +1,6 @@
 #include "animation_gameoflife_p16.h"
 
-static const gameoflife_playfield_t playfield = {
+static const gameoflife_native_playfield_t playfield = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -19,7 +19,7 @@ static const gameoflife_playfield_t playfield = {
 };
 
 static void animation_gameoflife_p16_start(void) {
-	animation_gameoflife_start(&playfield);
+	animation_gameoflife_start(playfield, NULL);
 }
 
 animation_t animation_gameoflife_p16 = {
