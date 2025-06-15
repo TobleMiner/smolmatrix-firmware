@@ -14,6 +14,7 @@
 #include "gpiod.h"
 #include "menu.h"
 #include "os.h"
+#include "rng.h"
 #include "settings.h"
 #include "util.h"
 
@@ -58,6 +59,10 @@ static void clock_init(void) {
 
 	rcc_periph_clock_enable(RCC_GPIOA);
 	rcc_periph_clock_enable(RCC_GPIOB);
+
+	// Enable HSI14 (required by RNG)
+	rcc_osc_on(RCC_HSI48);
+	rcc_wait_for_osc_ready(RCC_HSI48);
 }
 
 static uint64_t last_adc_update_g = 0;
@@ -65,6 +70,7 @@ static uint64_t last_adc_update_g = 0;
 int main(void) {
 	gpiod_init();
 	clock_init();
+	rng_init();
 	settings_load_from_flash();
 	os_init();
 	display_init();
