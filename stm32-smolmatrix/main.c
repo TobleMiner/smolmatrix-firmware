@@ -55,7 +55,7 @@ static void clock_init(void) {
 	rcc_ahb_frequency = MHZ(80);
 	rcc_apb1_frequency = MHZ(5);
 	rcc_apb2_frequency = MHZ(80);
-	
+
 	rcc_periph_clock_enable(RCC_GPIOA);
 	rcc_periph_clock_enable(RCC_GPIOB);
 }
@@ -71,47 +71,10 @@ int main(void) {
 	menu_init();
 
 	while(1) {
-		uint8_t x, y, bit;
-		const fb_t *fb;
-		int brightness;
-
 		os_run();
 		button_update();
 		menu_update();
 		display_update();
-
-		fb = display_get_fb();
-
-		/* 8 loop cycles for 8 bits, exponentially increasing duration */
-		for (bit = 0; bit < 8; bit++) {
-			/* display is multiplexed over rows */
-			for (y = 0; y < 15; y++) {
-				int i;
-				uint16_t row = 0;
-
-				for (x = 0; x < 15; x++) {
-					/* Set output bit if current brightness bit is set, too */
-					if ((*fb)[(14 - y) * 15 + x] & (1 << bit)) {
-						row |= (1 << x);
-					}	
-				}
-				/* Anode pin mapped to cathode of this row is on PB15 */
-				if (row & (1 << y)) {
-					row |= 1 << 15;
-				}
-				row &= ~(1 << y);
-				/* Set all outputs to zero to prevent ghosting */
-				gpio_port_write(GPIOB, 0);
-				/* Setup hi-z pins first */
-				gpio_mode_setup(GPIOB, GPIO_MODE_INPUT, GPIO_PUPD_NONE, ~(row | (1 << y)) & 0xffff);
-				/* Setup outputs */
-				gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, row | (1 << y));
-				/* Set output values */
-				gpio_port_write(GPIOB, row);
-				/* Wait for brightness bit to be displayed */
-				for (i = 0; i < (16 << bit); i++) __asm("nop;");
-			}
-		}
 	}
 
 	return 0;
