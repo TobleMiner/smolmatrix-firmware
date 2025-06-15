@@ -49,9 +49,9 @@ static void clock_init(void) {
 	// AHB prescaler=1 (80MHz)
 	rcc_set_hpre(RCC_CFGR_HPRE_NODIV);
 	// APB1 prescaler=16 (5MHz)
-	rcc_set_ppre1(RCC_CFGR_PPRE1_DIV16);
+	rcc_set_ppre1(RCC_CFGR_PPRE_DIV16);
 	// APB2 prescaler=1 (80MHz)
-	rcc_set_ppre2(RCC_CFGR_PPRE2_NODIV);
+	rcc_set_ppre2(RCC_CFGR_PPRE_NODIV);
 	rcc_ahb_frequency = MHZ(80);
 	rcc_apb1_frequency = MHZ(5);
 	rcc_apb2_frequency = MHZ(80);
