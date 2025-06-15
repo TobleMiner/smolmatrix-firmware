@@ -5,6 +5,7 @@
 #include "animation_sinefield.h"
 #include "animation_flashlight.h"
 #include "animation_pixelracer.h"
+#include "animation_gameoflife_acorn_eternity.h"
 #include "animation_gameoflife_glider.h"
 #include "animation_gameoflife_hwss.h"
 #include "animation_gameoflife_tumbler.h"
@@ -24,6 +25,7 @@ static animation_t *animations[] = {
 	&animation_gameoflife_p16,
 	&animation_hoa,
 	&animation_tm,
+	&animation_gameoflife_acorn_eternity,
 };
 
 static unsigned animation_id = 0;
