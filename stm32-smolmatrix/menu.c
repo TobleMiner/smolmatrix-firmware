@@ -1,5 +1,6 @@
 #include <stddef.h>
 
+#include "animation.h"
 #include "button.h"
 #include "display.h"
 #include "icons.h"
