@@ -1,16 +1,21 @@
 #include "display.h"
 
+#include <libopencm3/cm3/cortex.h>
 #include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/timer.h>
 
 #include "settings.h"
+#include "util.h"
 
 static const void *fbmem = NULL;
-static fb_t framebuffer_g;
+static fb_t framebuffer_a, framebuffer_b;
+static volatile fb_ptr_t framebuffer_update = framebuffer_a;
+static volatile fb_ptr_t framebuffer_draw = framebuffer_b;
 static unsigned display_brightness = 100;
 static bool fb_dirty = true;
+static volatile bool fb_swap_required = false;
 static uint8_t current_mux_row = 0;
 static uint8_t current_bright_bit = 0;
 
@@ -33,11 +38,14 @@ void display_update() {
 
 		fb_dirty = false;
 
+		cm_disable_interrupts();
 		for (y = 0; y < FB_HEIGHT; y++) {
 			for (x = 0; x < FB_WIDTH; x++) {
-				framebuffer_g[y * FB_WIDTH + x] = (uint16_t)fb[y * FB_WIDTH + x] * display_brightness / 100;
+				framebuffer_update[y * FB_WIDTH + x] = (uint16_t)fb[y * FB_WIDTH + x] * display_brightness / 100;
 			}
 		}
+		fb_swap_required = true;
+		cm_enable_interrupts();
 	}
 }
 
@@ -66,7 +74,7 @@ void tim1_up_tim16_isr () {
 
 	for (x = 0; x < 15; x++) {
 		/* Set output bit if current brightness bit is set, too */
-		if (framebuffer_g[(14 - current_mux_row) * 15 + x] & (1 << current_bright_bit)) {
+		if (framebuffer_draw[(14 - current_mux_row) * 15 + x] & (1 << current_bright_bit)) {
 			row |= (1 << x);
 		}
 	}
@@ -95,7 +103,15 @@ void tim1_up_tim16_isr () {
 		current_bright_bit++;
 		if (current_bright_bit >= 8) {
 			current_bright_bit = 0;
-			// TODO: swap buffers for double buffering
+
+			/*
+			 * Frame fully displayed, swap fbs if main execution
+			 * context has prepared a new one;
+			 */
+			if (fb_swap_required) {
+				SWAP(framebuffer_draw, framebuffer_update);
+				fb_swap_required = false;
+			}
 		}
 	}
 }
