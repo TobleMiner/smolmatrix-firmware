@@ -63,6 +63,7 @@ static void animation_gameoflife_acorn_eternity_start(void) {
 		.width = ANIMATION_GAMEOFLIFE_MAX_WIDHT,
 		.height = ANIMATION_GAMEOFLIFE_MAX_HEIGHT,
 		.update_rate_hz = UPDATE_RATE_HZ,
+		.lowpass_filter = 4,
 		.post_update_cb = post_update
 	};
 

@@ -30,6 +30,8 @@ static gameoflife_playfield_t playfield1;
 
 static gameoflife_playfield_t playfield2;
 static fb_t render_fb;
+static fb_t history_fbs[ANIMATION_GAMEOFLIFE_MAX_HISTORY];
+unsigned int history_idx = 0;
 
 static uint8_t* playfield_src;
 static uint8_t* playfield_dst;
@@ -38,6 +40,7 @@ static os_task_t update_task;
 
 static int playfield_width = FB_WIDTH;
 static int playfield_height = FB_HEIGHT;
+static unsigned int lowpass_filter = 0;
 
 #define DEFAULT_UPDATE_RATE_HZ 7
 
@@ -116,6 +119,7 @@ static unsigned int animation_gameoflife_render_to_fb(void) {
 
 	for (y = 0; y < FB_HEIGHT; y++) {
 		for (x = 0; x < FB_WIDTH; x++) {
+			unsigned int pixel_idx = y * FB_WIDTH + x;
 			unsigned int population =
 				animation_gameoflife_count_population_in_area(playfield_src,
 									      x * scale_x,
@@ -123,11 +127,28 @@ static unsigned int animation_gameoflife_render_to_fb(void) {
 									      (x + 1) * scale_x,
 									      (y + 1) * scale_y);
 			total_popultaion += population;
-			if (population) {
-				render_fb[y * FB_WIDTH + x] = population * scale_bright - 1;
-			} else {
-				render_fb[y * FB_WIDTH + x] = 0;
+
+			if (lowpass_filter) {
+				history_fbs[history_idx][pixel_idx] = population;
+
+				unsigned int population_sum = 0;
+				for (unsigned int i = 0; i < lowpass_filter; i++) {
+					population_sum += history_fbs[i][pixel_idx];
+				}
+				population = population_sum / lowpass_filter;
 			}
+			if (population) {
+				render_fb[pixel_idx] = population * scale_bright - 1;
+			} else {
+				render_fb[pixel_idx] = 0;
+			}
+		}
+	}
+
+	if (lowpass_filter) {
+		history_idx++;
+		if (history_idx >= lowpass_filter) {
+			history_idx = 0;
 		}
 	}
 
@@ -179,12 +200,16 @@ void animation_gameoflife_start(const uint8_t *playfield, const gameoflife_confi
 		playfield_width = cfg->width;
 		playfield_height = cfg->height;
 		update_rate_hz = cfg->update_rate_hz;
+		lowpass_filter = cfg->lowpass_filter;
 		post_update_cb = cfg->post_update_cb;
+		history_idx = 0;
+		memset(history_fbs, 0, sizeof(history_fbs));
 	} else {
 		memcpy(playfield1, playfield, sizeof(gameoflife_native_playfield_t));
 		playfield_width = FB_WIDTH;
 		playfield_height = FB_HEIGHT;
 		update_rate_hz = DEFAULT_UPDATE_RATE_HZ;
+		lowpass_filter = 0;
 		post_update_cb = NULL;
 	}
 
